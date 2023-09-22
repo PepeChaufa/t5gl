@@ -90,18 +90,30 @@ public class FrmLogin extends JFrame {
 	private JTextField txtClave;
 	
 	
+	private String leerUsuario() {
+		if(!txtUsuario.getText().matches("[A-Za-z0-9_]+[@][a-z0-9]+[.][a-z]{2,3}")) {
+		JOptionPane.showMessageDialog(null, "Usuario incorrecto");
+		return null;
+		}
+		return txtUsuario.getText();
+	}
+	
 	void registrar() {
 		
-		EntityManagerFactory fabrica = Persistence.createEntityManagerFactory("jpa_sesion01");
+		String usuario = leerUsuario();
+		String pass = txtClave.getText();
 		
+		if(usuario == null || pass == null) {
+			return;
+		}
+		
+		EntityManagerFactory fabrica = Persistence.createEntityManagerFactory("jpa_sesion01");
 		EntityManager manejador = fabrica.createEntityManager();
 		
 		String jpql = "select u from Usuario u where u.usr_usua = :usuario and u.cla_usua = :clave";
 		
 		try {
 			
-			String usuario = txtUsuario.getText();
-			String pass = txtClave.getText();
 			Usuario u = manejador.createQuery(jpql, Usuario.class).setParameter("usuario", usuario).setParameter("clave", pass).getSingleResult();
 
 			JOptionPane.showMessageDialog(this,"Bienvenido " + u.getNom_usua() + " " + u.getApe_usua());
@@ -118,4 +130,6 @@ public class FrmLogin extends JFrame {
 		manejador.close();
 		
 	}
+
+
 }
